@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตารางงานคุณชายโดม - จัดการงานอย่างมือโปร</title>
+    <title>ตารางงานคุณชายโดม</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -3931,7 +3931,7 @@
         let selectedWeekdays = [];
         let currentSection = 'dashboard';
         let selectedBranches = [];
-        let customBranches = JSON.parse(localStorage.getItem('customBranches')) || [];
+        let customBranches = JSON.parse(localStorage.getItem('customBranches')) || ['OFFICE', 'B012', 'B046'];
         let customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
         let branchVisits = JSON.parse(localStorage.getItem('branchVisits')) || [];
         let appName = localStorage.getItem('appName') || '📋 ตารางงานคุณชายโดม';
@@ -4355,6 +4355,9 @@
             addBranchOption(branchCode);
             input.value = '';
             showToast(`✅ เพิ่มสาขา ${branchCode} สำเร็จ!`);
+            
+            // อัพเดต branch selector ทั้งหมด
+            updateBranchSelectors();
         }
 
         function addBranchOption(branchCode) {
@@ -4369,7 +4372,10 @@
             grid.appendChild(option);
         }
 
-        function updateBranchTimeDisplay() {
+        function updateBranchSelectors() {
+            // อัพเดตทั้งหมดที่เลือกสาขา
+            updateBranchTimeDisplay();
+        }
             const display = document.getElementById('branchTimeDisplay');
             const timeStart = document.getElementById('dueTimeStartInput').value;
             
@@ -6151,12 +6157,17 @@
             document.getElementById('calMonthPending').textContent = monthPending;
             document.getElementById('calMonthDayOff').textContent = monthDayOffs;
 
-            // Calculate leave stats
+            // Calculate leave stats - รวมทั้ง dayOffs และ leaveDays
             const monthLeaves = leaveDays.filter(l => l.date >= firstDayOfMonth && l.date <= lastDayOfMonth);
+            const monthDayOffsTotal = dayOffs.filter(d => d >= firstDayOfMonth && d <= lastDayOfMonth).length;
+            
             const holidayCount = monthLeaves.filter(l => l.type === 'holiday').length;
             const vacationCount = monthLeaves.filter(l => l.type === 'vacation').length;
             const sickCount = monthLeaves.filter(l => l.type === 'sick').length;
             const personalCount = monthLeaves.filter(l => l.type === 'personal').length;
+            
+            // รวมวันลาทั้งหมด = dayOffs + leaveDays
+            const totalLeaveDays = monthDayOffsTotal + monthLeaves.length;
 
             const holidayEl = document.getElementById('leaveHolidayCount');
             const vacationEl = document.getElementById('leaveVacationCount');
