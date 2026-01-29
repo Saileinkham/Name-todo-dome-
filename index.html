@@ -4112,6 +4112,24 @@
 
         // Initialize
         function init() {
+            // CRITICAL FIX: Reload all data from localStorage to fix refresh instability
+            try {
+                todos = JSON.parse(localStorage.getItem('todos')) || [];
+                dayOffs = JSON.parse(localStorage.getItem('dayOffs')) || [];
+                leaveDays = JSON.parse(localStorage.getItem('leaveDays')) || [];
+                customBranches = JSON.parse(localStorage.getItem('customBranches')) || [];
+                customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
+                branchVisits = JSON.parse(localStorage.getItem('branchVisits')) || [];
+                branchNames = JSON.parse(localStorage.getItem('branchNames')) || {
+                    'B011': 'B011',
+                    'B016': 'B016',
+                    'B018': 'B018',
+                    'B024': 'B024'
+                };
+            } catch (error) {
+                console.error('Error reloading data from localStorage:', error);
+            }
+
             applyTheme();
             loadAppSettings();
             loadAppName(); // Load app name
@@ -6464,7 +6482,9 @@
             }
             
             localStorage.setItem('dayOffs', JSON.stringify(dayOffs));
+            localStorage.setItem('leaveDays', JSON.stringify(leaveDays));
             renderCalendar();
+            renderWeekPlan();
         }
 
         function closeModal(event) {
