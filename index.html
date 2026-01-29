@@ -4352,6 +4352,10 @@
             customBranches.push(branchCode);
             localStorage.setItem('customBranches', JSON.stringify(customBranches));
             
+            // เพิ่มชื่อสาขา
+            branchNames[branchCode] = branchCode;
+            localStorage.setItem('branchNames', JSON.stringify(branchNames));
+            
             addBranchOption(branchCode);
             input.value = '';
             showToast(`✅ เพิ่มสาขา ${branchCode} สำเร็จ!`);
@@ -4376,6 +4380,8 @@
             // อัพเดตทั้งหมดที่เลือกสาขา
             updateBranchTimeDisplay();
         }
+
+        function updateBranchTimeDisplay() {
             const display = document.getElementById('branchTimeDisplay');
             const timeStart = document.getElementById('dueTimeStartInput').value;
             
@@ -4814,7 +4820,7 @@
             select.innerHTML = '<option value="">-- เลือกสาขา --</option>';
 
             // Add all branches (default + custom) with their display names
-            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
+            const allBranches = ['B011', 'B016', 'B018', 'B024','B012','B046','OFFICE', ...customBranches];
             allBranches.forEach(branch => {
                 const option = document.createElement('option');
                 option.value = branch;
@@ -4874,7 +4880,7 @@
 
         function renderSettingsBranchList() {
             const list = document.getElementById('settingsBranchList');
-            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
+            const allBranches = ['B011', 'B016', 'B018', 'B024','B012','B046','OFFICE', ...customBranches];
             
             if (allBranches.length === 0) {
                 list.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">ยังไม่มีสาขา</div>';
@@ -4883,7 +4889,7 @@
             
             list.innerHTML = '';
             allBranches.forEach(branch => {
-                const isDefault = ['B011', 'B016', 'B018', 'B024'].includes(branch);
+                const isDefault = ['B011', 'B016', 'B018', 'B024','B012','B046','OFFICE'].includes(branch);
                 const displayName = branchNames[branch] || branch;
                 const item = document.createElement('div');
                 item.className = 'custom-category-item';
@@ -4973,6 +4979,10 @@
             
             customBranches.push(branchCode);
             localStorage.setItem('customBranches', JSON.stringify(customBranches));
+            
+            // เพิ่มชื่อสาขา
+            branchNames[branchCode] = branchCode;
+            localStorage.setItem('branchNames', JSON.stringify(branchNames));
             
             addBranchOption(branchCode);
             renderSettingsBranchList();
@@ -6496,6 +6506,7 @@
             localStorage.setItem('leaveDays', JSON.stringify(leaveDays));
             renderCalendar();
             renderWeekPlan();
+            renderDashboardSummary();
         }
 
         function closeModal(event) {
