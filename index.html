@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตารางงานคุณชายโดม</title>
+    <title>ตารางงานคุณชายโดม - จัดการงานอย่างมือโปร</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -2973,134 +2973,6 @@
                 transform: translateX(-50%) translateY(0);
             }
         }
-
-        /* NEW FEATURES STYLES */
-        
-        /* Pinned Tasks */
-        .todo-item.pinned {
-            border-left: 4px solid var(--warning);
-            background: linear-gradient(90deg, rgba(245, 158, 11, 0.05), transparent);
-        }
-
-        .todo-item.pinned .todo-text::before {
-            content: '📌 ';
-        }
-
-        .icon-btn.active {
-            background: var(--warning);
-            color: white;
-        }
-
-        /* Subtasks Preview */
-        .subtasks-preview {
-            border-left: 3px solid var(--info);
-            padding-left: 12px;
-        }
-
-        .subtasks-preview input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        /* Pomodoro Timer Styles */
-        .pomodoro-timer {
-            display: inline-block;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, var(--secondary), var(--danger));
-            color: white;
-            border-radius: 8px;
-            font-weight: 600;
-            animation: pomodoroFlash 1s ease-in-out infinite;
-        }
-
-        @keyframes pomodoroFlash {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        /* Statistics Modal */
-        .statistics-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--bg-card);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: var(--shadow-lg);
-            z-index: 5000;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            font-family: 'Kanit', sans-serif;
-        }
-
-        .statistics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .stat-box {
-            background: var(--bg-hover);
-            padding: 16px;
-            border-radius: 12px;
-            text-align: center;
-            border: 2px solid var(--border);
-        }
-
-        .stat-box-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-
-        .stat-box-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Progress Bar for Categories */
-        .category-progress {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 12px 0;
-        }
-
-        .category-progress-label {
-            width: 120px;
-            font-size: 0.9rem;
-        }
-
-        .category-progress-bar {
-            flex: 1;
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .category-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success), var(--info));
-            transition: width 0.3s ease;
-        }
-
-        .category-progress-text {
-            width: 50px;
-            text-align: right;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
     </style>
 </head>
 <body>
@@ -3403,19 +3275,6 @@
                 </div>
             </div>
 
-            <!-- Category Summary -->
-            <div class="summary-card">
-                <div class="summary-card-header">
-                    <div class="summary-card-title">
-                        <span class="summary-card-icon">📊</span>
-                        <span>แยกตามหมวดหมู่</span>
-                    </div>
-                </div>
-                <div class="summary-card-body" id="categorySummary">
-                    <!-- Will be populated by JS -->
-                </div>
-            </div>
-
             <!-- Branch Summary -->
             <div class="summary-card">
                 <div class="summary-card-header">
@@ -3500,8 +3359,6 @@
                     </button>
                     <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
                 </div>
-                <button class="btn btn-secondary" onclick="showStatistics()" title="สถิติและการวิเคราะห์">📊 สถิติ</button>
-                <button class="btn btn-secondary" id="pomodoroBtn" onclick="startPomodoro()" title="Pomodoro Timer">⏱️ Pomodoro</button>
                 <div class="export-menu">
                     <button class="btn btn-secondary" onclick="toggleExportMenu()">📥 นำเข้า/ส่งออก ▼</button>
                     <div class="export-dropdown" id="exportDropdown">
@@ -3532,6 +3389,39 @@
             </div>
         </div>
 
+        <!-- Search & Quick Actions Bar -->
+        <div style="background: var(--bg-card); padding: 20px; border-radius: 16px; margin-bottom: 20px; box-shadow: var(--shadow);">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                <!-- Search Box -->
+                <div style="flex: 1; min-width: 250px; position: relative;">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="🔍 ค้นหางาน..."
+                        onkeyup="searchTodos()"
+                        style="width: 100%; padding: 12px 40px 12px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; transition: all 0.3s;"
+                    >
+                    <button 
+                        onclick="clearSearch()" 
+                        id="clearSearchBtn"
+                        style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px 8px; display: none;"
+                        title="ล้างการค้นหา"
+                    >✕</button>
+                </div>
+                
+                <!-- Quick Actions -->
+                <button onclick="exportToCSV()" class="btn" style="background: linear-gradient(135deg, #10b981, #059669); white-space: nowrap; padding: 12px 20px;">
+                    📤 Export CSV
+                </button>
+                <button onclick="showStatsModal()" class="btn" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); white-space: nowrap; padding: 12px 20px;">
+                    📊 สถิติ
+                </button>
+                <button onclick="toggleAllCompleted()" class="btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); white-space: nowrap; padding: 12px 20px;">
+                    ✅ เลือกทั้งหมด
+                </button>
+            </div>
+        </div>
+
         <!-- Add Todo Form -->
         <div class="add-todo-form">
             <!-- Branch Visit Entry (Now at top - Primary function) -->
@@ -3549,9 +3439,12 @@
                         <select id="branchVisitBranch" style="width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 10px;">
                             <option value="">-- เลือกสาขา --</option>
                             <option value="B011">B011</option>
+                            <option value="B012">B012</option>
                             <option value="B016">B016</option>
                             <option value="B018">B018</option>
                             <option value="B024">B024</option>
+                            <option value="B046">B046</option>
+                            <option value="OFFICE">OFFICE</option>
                         </select>
                     </div>
                     <div>
@@ -3962,9 +3855,14 @@
 
             <!-- Branch Management Section -->
             <div class="settings-section">
-                <div class="settings-section-title">🏢 สาขาที่มี</div>
-                <div class="settings-section-desc">สาขาที่กำหนดเบื้องต้น</div>
+                <div class="settings-section-title">🏢 จัดการสาขา</div>
+                <div class="settings-section-desc">เพิ่ม แก้ไข หรือลบสาขาที่ใช้งาน</div>
                 
+                <div class="branch-input-group">
+                    <input type="text" id="settingsBranchInput" placeholder="รหัสสาขา (เช่น B030)" style="flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem;">
+                    <button class="btn btn-primary" onclick="addCustomBranchFromSettings()">➕ เพิ่มสาขา</button>
+                </div>
+
                 <div class="custom-category-list" id="settingsBranchList" style="margin-top: 15px;">
                     <!-- Will be populated by JS -->
                 </div>
@@ -4009,9 +3907,12 @@
                 <select id="editBranchVisitBranch" class="edit-branch-input">
                     <option value="">-- เลือกสาขา --</option>
                     <option value="B011">B011</option>
+                    <option value="B012">B012</option>
                     <option value="B016">B016</option>
                     <option value="B018">B018</option>
                     <option value="B024">B024</option>
+                    <option value="B046">B046</option>
+                    <option value="OFFICE">OFFICE</option>
                 </select>
             </div>
 
@@ -4056,18 +3957,24 @@
         let selectedWeekdays = [];
         let currentSection = 'dashboard';
         let selectedBranches = [];
-        let customBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+        let customBranches = JSON.parse(localStorage.getItem('customBranches')) || [];
         let customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
         let branchVisits = JSON.parse(localStorage.getItem('branchVisits')) || [];
         let appName = localStorage.getItem('appName') || '📋 ตารางงานคุณชายโดม';
         let appLogo = localStorage.getItem('appLogo') || '';
         
+        // Default branches (can't be deleted)
+        const defaultBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+        
         // Branch name mappings (editable)
         let branchNames = JSON.parse(localStorage.getItem('branchNames')) || {
             'B011': 'B011',
+            'B012': 'B012',
             'B016': 'B016',
             'B018': 'B018',
-            'B024': 'B024'
+            'B024': 'B024',
+            'B046': 'B046',
+            'OFFICE': 'OFFICE'
         };
 
         // Leave types
@@ -4104,11 +4011,6 @@
             setInterval(() => {
                 generateRecurringTasks();
             }, 3600000);
-
-            // NEW: Check reminders every minute
-            setInterval(() => {
-                checkReminders();
-            }, 60000);
 
             window.addEventListener('resize', checkSidebarVisibility);
         }
@@ -4242,27 +4144,6 @@
 
         // Initialize
         function init() {
-            // CRITICAL FIX: Reload all data from localStorage to fix refresh instability
-            try {
-                todos = JSON.parse(localStorage.getItem('todos')) || [];
-                dayOffs = JSON.parse(localStorage.getItem('dayOffs')) || [];
-                leaveDays = JSON.parse(localStorage.getItem('leaveDays')) || [];
-                customBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
-                customCategories = JSON.parse(localStorage.getItem('customCategories')) || [];
-                branchVisits = JSON.parse(localStorage.getItem('branchVisits')) || [];
-                branchNames = JSON.parse(localStorage.getItem('branchNames')) || {
-                    'B011': 'B011',
-                    'B016': 'B016',
-                    'B018': 'B018',
-                    'B024': 'B024',
-                    'B012': 'B012',
-                    'B046': 'B046',
-                    'OFFICE': 'OFFICE'
-                };
-            } catch (error) {
-                console.error('Error reloading data from localStorage:', error);
-            }
-
             applyTheme();
             loadAppSettings();
             loadAppName(); // Load app name
@@ -4341,83 +4222,47 @@
             document.getElementById('monthPendingTasks').textContent = pending;
             document.getElementById('monthOverdueTasks').textContent = overdue;
             
-            // Category Summary
-            const categorySummary = document.getElementById('categorySummary');
-            categorySummary.innerHTML = '';
             
-            const categories = {
-                work: { icon: '💼', name: 'งาน', color: '#3b82f6' },
-                personal: { icon: '👤', name: 'ส่วนตัว', color: '#8b5cf6' },
-                shopping: { icon: '🛒', name: 'ช็อปปิ้ง', color: '#f59e0b' },
-                health: { icon: '💪', name: 'สุขภาพ', color: '#10b981' },
-                study: { icon: '📚', name: 'เรียน', color: '#ec4899' }
-            };
-            
-            Object.entries(categories).forEach(([key, cat]) => {
-                const catTodos = monthTodos.filter(t => t.category === key);
-                const catCompleted = catTodos.filter(t => t.completed).length;
-                const percentage = catTodos.length > 0 ? Math.round((catCompleted / catTodos.length) * 100) : 0;
-                
-                const item = document.createElement('div');
-                item.className = 'summary-item';
-                item.innerHTML = `
-                    <div class="summary-item-label">
-                        <span>${cat.icon}</span>
-                        <span>${cat.name}</span>
-                    </div>
-                    <div class="summary-item-value">${catCompleted}/${catTodos.length}</div>
-                `;
-                
-                if (catTodos.length > 0) {
-                    const bar = document.createElement('div');
-                    bar.className = 'summary-item-bar';
-                    bar.innerHTML = `<div class="summary-item-bar-fill" style="width: ${percentage}%; background: ${cat.color};"></div>`;
-                    item.appendChild(bar);
-                }
-                
-                categorySummary.appendChild(item);
-            });
-            
-            // Branch Summary
+            // Branch Summary (from branchVisits, not todos)
             const branchSummary = document.getElementById('branchSummary');
-            branchSummary.innerHTML = '';
-            
-            const allBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
-            const branchCounts = {};
-            
-            allBranches.forEach(branch => {
-                const branchTodos = monthTodos.filter(t => t.branches && t.branches.includes(branch));
-                const branchCompleted = branchTodos.filter(t => t.completed).length;
+            if (branchSummary) {
+                branchSummary.innerHTML = '';
                 
-                if (branchTodos.length > 0) {
-                    branchCounts[branch] = { total: branchTodos.length, completed: branchCompleted };
-                }
-            });
-            
-            if (Object.keys(branchCounts).length === 0) {
-                branchSummary.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">ยังไม่มีงานที่ระบุสาขา</div>';
-            } else {
-                Object.entries(branchCounts).forEach(([branch, counts]) => {
-                    const percentage = Math.round((counts.completed / counts.total) * 100);
-                    const displayName = branchNames[branch] || branch;
+                const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
+                const branchCounts = {};
+                
+                // Count branch visits in this month
+                allBranches.forEach(branch => {
+                    const visits = branchVisits.filter(v => 
+                        v.branch === branch && 
+                        v.date >= firstDay && 
+                        v.date <= lastDay
+                    ).length;
                     
-                    const item = document.createElement('div');
-                    item.className = 'summary-item';
-                    item.innerHTML = `
-                        <div class="summary-item-label">
-                            <span>🏢</span>
-                            <span>${displayName}</span>
-                        </div>
-                        <div class="summary-item-value">${counts.completed}/${counts.total}</div>
-                    `;
-                    
-                    const bar = document.createElement('div');
-                    bar.className = 'summary-item-bar';
-                    bar.innerHTML = `<div class="summary-item-bar-fill" style="width: ${percentage}%;"></div>`;
-                    item.appendChild(bar);
-                    
-                    branchSummary.appendChild(item);
+                    if (visits > 0) {
+                        branchCounts[branch] = visits;
+                    }
                 });
+                
+                if (Object.keys(branchCounts).length === 0) {
+                    branchSummary.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">ยังไม่มีการเข้าสาขาเดือนนี้</div>';
+                } else {
+                    Object.entries(branchCounts).sort((a, b) => b[1] - a[1]).forEach(([branch, count]) => {
+                        const displayName = branchNames[branch] || branch;
+                        
+                        const item = document.createElement('div');
+                        item.className = 'summary-item';
+                        item.innerHTML = `
+                            <div class="summary-item-label">
+                                <span>🏢</span>
+                                <span>${displayName}</span>
+                            </div>
+                            <div class="summary-item-value">${count} ครั้ง</div>
+                        `;
+                        
+                        branchSummary.appendChild(item);
+                    });
+                }
             }
 
             // Update Leave Summary in Dashboard
@@ -4476,14 +4321,18 @@
                 return;
             }
             
-            const allBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
             if (allBranches.includes(branchCode)) {
                 showToast('สาขานี้มีอยู่แล้ว', 'error');
                 return;
             }
             
-            // Don't allow adding custom branches
-            showToast('สามารถเลือกได้เฉพาะสาขาที่กำหนดเบื้องต้นเท่านั้น', 'warning');
+            customBranches.push(branchCode);
+            localStorage.setItem('customBranches', JSON.stringify(customBranches));
+            
+            addBranchOption(branchCode);
+            input.value = '';
+            showToast(`✅ เพิ่มสาขา ${branchCode} สำเร็จ!`);
         }
 
         function addBranchOption(branchCode) {
@@ -4496,11 +4345,6 @@
                 <label for="branch-${branchCode}">${branchCode}</label>
             `;
             grid.appendChild(option);
-        }
-
-        function updateBranchSelectors() {
-            // อัพเดตทั้งหมดที่เลือกสาขา
-            updateBranchTimeDisplay();
         }
 
         function updateBranchTimeDisplay() {
@@ -4851,7 +4695,7 @@
             branchSelect.value = visit.branch;
             
             // Add custom branches to select
-            const allBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
             branchSelect.innerHTML = '<option value="">-- เลือกสาขา --</option>';
             allBranches.forEach(branch => {
                 const option = document.createElement('option');
@@ -4941,8 +4785,8 @@
             // Clear and rebuild all options
             select.innerHTML = '<option value="">-- เลือกสาขา --</option>';
 
-            // Add all branches (default only) with their display names
-            const allBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+            // Add all branches (default + custom) with their display names
+            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
             allBranches.forEach(branch => {
                 const option = document.createElement('option');
                 option.value = branch;
@@ -5002,7 +4846,7 @@
 
         function renderSettingsBranchList() {
             const list = document.getElementById('settingsBranchList');
-            const allBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
             
             if (allBranches.length === 0) {
                 list.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">ยังไม่มีสาขา</div>';
@@ -5011,6 +4855,7 @@
             
             list.innerHTML = '';
             allBranches.forEach(branch => {
+                const isDefault = defaultBranches.includes(branch);
                 const displayName = branchNames[branch] || branch;
                 const item = document.createElement('div');
                 item.className = 'custom-category-item';
@@ -5018,10 +4863,11 @@
                     <div class="custom-category-info">
                         <span class="custom-category-icon">🏢</span>
                         <span class="custom-category-name" id="branch-name-${branch}">${displayName}</span>
-                        <span style="font-size: 0.75rem; color: var(--text-secondary); margin-left: 8px;">(ค่าเริ่มต้น)</span>
+                        ${isDefault ? '<span style="font-size: 0.75rem; color: var(--text-secondary); margin-left: 8px;">(ค่าเริ่มต้น)</span>' : ''}
                     </div>
                     <div class="custom-category-actions">
                         <button class="icon-btn" onclick="editBranchName('${branch}')" title="แก้ไขชื่อ">✏️</button>
+                        ${!isDefault ? `<button class="icon-btn delete" onclick="deleteCustomBranchFromSettings('${branch}')" title="ลบ">🗑️</button>` : ''}
                     </div>
                 `;
                 list.appendChild(item);
@@ -5083,8 +4929,30 @@
         }
 
         function addCustomBranchFromSettings() {
-            showToast('สามารถเลือกได้เฉพาะสาขาที่กำหนดเบื้องต้นเท่านั้น', 'warning');
-            return;
+            const input = document.getElementById('settingsBranchInput');
+            const branchCode = input.value.trim().toUpperCase();
+            
+            if (!branchCode) {
+                showToast('กรุณาใส่รหัสสาขา', 'error');
+                return;
+            }
+            
+            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
+            if (allBranches.includes(branchCode)) {
+                showToast('สาขานี้มีอยู่แล้ว', 'error');
+                return;
+            }
+            
+            customBranches.push(branchCode);
+            localStorage.setItem('customBranches', JSON.stringify(customBranches));
+            
+            addBranchOption(branchCode);
+            renderSettingsBranchList();
+            updateCategorySelectors();
+            updateBranchVisitSelector();
+            
+            input.value = '';
+            showToast(`✅ เพิ่มสาขา ${branchCode} สำเร็จ!`);
         }
 
         function deleteCustomBranchFromSettings(branchCode) {
@@ -5532,10 +5400,6 @@
                 timeStart: timeStart,
                 timeEnd: timeEnd,
                 branches: [...selectedBranches],
-                notes: '', // NEW: Task notes
-                isPinned: false, // NEW: Pin status
-                reminder: null, // NEW: Reminder time
-                subtasks: [], // NEW: Subtasks array
                 createdAt: new Date().toISOString()
             };
 
@@ -5623,7 +5487,7 @@
             const editGrid = document.getElementById('editBranchGrid');
             editGrid.innerHTML = '';
             
-            const allBranches = ['B011', 'B012', 'B016', 'B018', 'B024', 'B046', 'OFFICE'];
+            const allBranches = ['B011', 'B016', 'B018', 'B024', ...customBranches];
             allBranches.forEach(branch => {
                 const isSelected = editSelectedBranches.includes(branch);
                 const option = document.createElement('div');
@@ -5736,13 +5600,6 @@
                 filtered = filtered.filter(t => t.priority === currentFilter);
             }
 
-            // NEW: Sort pinned tasks first
-            filtered.sort((a, b) => {
-                if (a.isPinned && !b.isPinned) return -1;
-                if (!a.isPinned && b.isPinned) return 1;
-                return 0;
-            });
-
             // Group by status
             const active = filtered.filter(t => !t.completed);
             const completed = filtered.filter(t => t.completed);
@@ -5750,16 +5607,9 @@
             const sections = document.getElementById('todoSections');
             sections.innerHTML = '';
 
-            // NEW: Show pinned section if there are pinned tasks
-            const pinnedTodos = active.filter(t => t.isPinned);
-            if (pinnedTodos.length > 0) {
-                sections.appendChild(createSection('📌 งานปักหมุด', pinnedTodos, '⭐'));
-            }
-
             // Active Todos Section
-            const unpinnedActive = active.filter(t => !t.isPinned);
-            if (unpinnedActive.length > 0 || currentFilter === 'all' || currentFilter === 'active') {
-                sections.appendChild(createSection('งานที่ต้องทำ', unpinnedActive, '⏳'));
+            if (active.length > 0 || currentFilter === 'all' || currentFilter === 'active') {
+                sections.appendChild(createSection('งานที่ต้องทำ', active, '⏳'));
             }
 
             // Completed Todos Section
@@ -5810,7 +5660,7 @@
         // Create Todo Item
         function createTodoItem(todo) {
             const item = document.createElement('div');
-            item.className = `todo-item ${todo.completed ? 'completed' : ''} ${todo.isPinned ? 'pinned' : ''}`;
+            item.className = `todo-item ${todo.completed ? 'completed' : ''}`;
 
             const categoryIcons = {
                 work: '💼',
@@ -5828,48 +5678,25 @@
             const recurringText = getRecurringText(todo.recurring);
             const branchDisplay = todo.branches && todo.branches.length > 0 ? 
                 todo.branches.map(b => `<span class="branch-badge">🏢 ${b}</span>`).join(' ') : '';
-            
-            // NEW: Subtask count
-            const subtaskCount = todo.subtasks ? todo.subtasks.length : 0;
-            const subtaskCompleted = todo.subtasks ? todo.subtasks.filter(s => s.completed).length : 0;
-            const subtaskDisplay = subtaskCount > 0 ? `<span style="font-size: 0.85rem; color: var(--text-secondary);">📌 ${subtaskCompleted}/${subtaskCount}</span>` : '';
 
             item.innerHTML = `
                 <div class="checkbox-wrapper">
                     <div class="checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo(${todo.id})"></div>
                 </div>
                 <div class="todo-content">
-                    <div class="todo-text">${todo.isPinned ? '📌 ' : ''}${todo.icon ? todo.icon + ' ' : ''}${todo.text}</div>
+                    <div class="todo-text">${todo.icon ? todo.icon + ' ' : ''}${todo.text}</div>
                     <div class="todo-meta">
                         <span class="category-tag ${todo.category}">${getCategoryIcon(todo.category)} ${getCategoryName(todo.category)}</span>
                         <span class="priority-badge priority-${todo.priority}">${getPriorityText(todo.priority)}</span>
                         ${isRecurring ? `<span class="recurring-badge">🔄 ${recurringText}</span>` : ''}
                         ${branchDisplay}
                         ${todo.dueDate ? `<span class="due-date ${isOverdue ? 'overdue' : ''}">📅 ${formatDate(todo.dueDate)} ${timeDisplay}</span>` : ''}
-                        ${subtaskDisplay}
-                        ${todo.notes ? `<span style="font-size: 0.85rem; color: var(--text-secondary);">📝 มีหมายเหตุ</span>` : ''}
                     </div>
                 </div>
                 <div class="todo-actions">
-                    <button class="icon-btn ${todo.isPinned ? 'active' : ''}" onclick="togglePin(${todo.id})" title="ปักหมุด">📌</button>
-                    <button class="icon-btn" onclick="openTaskNotes(${todo.id})" title="หมายเหตุ">📝</button>
-                    <button class="icon-btn" onclick="addSubtask(${todo.id})" title="งานย่อย">📋</button>
-                    <button class="icon-btn" onclick="setReminder(${todo.id})" title="เตือน">⏰</button>
-                    <button class="icon-btn" onclick="duplicateTodo(${todo.id})" title="คัดลอก">📋</button>
                     <button class="icon-btn" onclick="editTodo(${todo.id})" title="แก้ไข">✏️</button>
                     <button class="icon-btn delete" onclick="deleteTodo(${todo.id})" title="ลบ">🗑️</button>
                 </div>
-                ${subtaskCount > 0 ? `
-                    <div class="subtasks-preview" style="margin-left: 50px; margin-top: 8px; padding: 8px; background: var(--bg-hover); border-radius: 8px;">
-                        ${todo.subtasks.map(st => `
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                <input type="checkbox" ${st.completed ? 'checked' : ''} onchange="toggleSubtask(${todo.id}, ${st.id})" style="cursor: pointer;">
-                                <span style="flex: 1; ${st.completed ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${st.text}</span>
-                                <button class="icon-btn delete" onclick="deleteSubtask(${todo.id}, ${st.id})" style="padding: 2px 6px; font-size: 0.9rem;">🗑️</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : ''}
             `;
 
             return item;
@@ -6223,30 +6050,6 @@
             }, 3000);
         }
 
-        // NEW: Browser Notification Function
-        function showNotification(message) {
-            // Check if browser supports notifications
-            if ('Notification' in window) {
-                if (Notification.permission === 'granted') {
-                    new Notification('📋 ตารางงาน', {
-                        body: message,
-                        icon: '📋'
-                    });
-                } else if (Notification.permission !== 'denied') {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === 'granted') {
-                            new Notification('📋 ตารางงาน', {
-                                body: message,
-                                icon: '📋'
-                            });
-                        }
-                    });
-                }
-            }
-            // Fallback to toast notification
-            showToast(message);
-        }
-
         // Theme Toggle
         function toggleTheme() {
             currentTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -6271,272 +6074,7 @@
             localStorage.setItem('todos', JSON.stringify(todos));
         }
 
-        // ====== NEW FEATURE FUNCTIONS ======
-
-        // 1. PIN/STAR FUNCTIONALITY
-        function togglePin(id) {
-            const todo = todos.find(t => t.id === id);
-            if (todo) {
-                todo.isPinned = !todo.isPinned;
-                saveTodos();
-                refreshAllViews();
-                showToast(todo.isPinned ? '📌 ปักหมุดงาน' : '📌 ยกเลิกปักหมุด');
-            }
-        }
-
-        // 2. TASK NOTES FUNCTIONALITY
-        function openTaskNotes(id) {
-            const todo = todos.find(t => t.id === id);
-            if (!todo) return;
-
-            const notes = prompt('📝 หมายเหตุสำหรับงาน:\n\n' + (todo.notes || ''), todo.notes || '');
-            if (notes !== null) {
-                todo.notes = notes;
-                saveTodos();
-                showToast('✅ บันทึกหมายเหตุสำเร็จ');
-            }
-        }
-
-        // 3. QUICK DUPLICATE FUNCTIONALITY
-        function duplicateTodo(id) {
-            const todo = todos.find(t => t.id === id);
-            if (!todo) return;
-
-            const newTodo = {
-                ...todo,
-                id: Date.now(),
-                completed: false,
-                createdAt: new Date().toISOString(),
-                subtasks: todo.subtasks ? [...todo.subtasks] : []
-            };
-
-            todos.unshift(newTodo);
-            saveTodos();
-            refreshAllViews();
-            showToast('✅ คัดลอกงานสำเร็จ');
-        }
-
-        // 4. SUBTASKS FUNCTIONALITY
-        function addSubtask(parentId) {
-            const subtaskName = prompt('📌 เพิ่มงานย่อย:');
-            if (!subtaskName) return;
-
-            const todo = todos.find(t => t.id === parentId);
-            if (!todo) return;
-
-            if (!todo.subtasks) todo.subtasks = [];
-
-            const subtask = {
-                id: Date.now(),
-                text: subtaskName,
-                completed: false
-            };
-
-            todo.subtasks.push(subtask);
-            saveTodos();
-            refreshAllViews();
-            showToast('✅ เพิ่มงานย่อยสำเร็จ');
-        }
-
-        function toggleSubtask(parentId, subtaskId) {
-            const todo = todos.find(t => t.id === parentId);
-            if (!todo || !todo.subtasks) return;
-
-            const subtask = todo.subtasks.find(s => s.id === subtaskId);
-            if (subtask) {
-                subtask.completed = !subtask.completed;
-                saveTodos();
-                refreshAllViews();
-            }
-        }
-
-        function deleteSubtask(parentId, subtaskId) {
-            const todo = todos.find(t => t.id === parentId);
-            if (!todo || !todo.subtasks) return;
-
-            todo.subtasks = todo.subtasks.filter(s => s.id !== subtaskId);
-            saveTodos();
-            refreshAllViews();
-            showToast('✅ ลบงานย่อยสำเร็จ');
-        }
-
-        // 5. REMINDERS FUNCTIONALITY
-        function setReminder(id) {
-            const todo = todos.find(t => t.id === id);
-            if (!todo) return;
-
-            const reminderTime = prompt('⏰ ตั้งเตือนก่อนงาน (นาที):\n(ตัวอย่าง: 15, 30, 60)', 
-                todo.reminder ? (todo.reminder / 60000).toString() : '15');
-            
-            if (reminderTime) {
-                todo.reminder = parseInt(reminderTime) * 60000;
-                saveTodos();
-                showToast(`⏰ ตั้งเตือนในอีก ${reminderTime} นาที`);
-            }
-        }
-
-        function checkReminders() {
-            const now = new Date();
-            todos.forEach(todo => {
-                if (!todo.reminder || !todo.dueDate || !todo.timeStart || todo.completed) return;
-
-                const taskDateTime = new Date(`${todo.dueDate}T${todo.timeStart}`);
-                const reminderTime = new Date(taskDateTime.getTime() - todo.reminder);
-
-                if (now >= reminderTime && now < taskDateTime) {
-                    if (!todo.reminderShown) {
-                        showNotification(`⏰ เตือน: ${todo.text}`);
-                        todo.reminderShown = true;
-                        saveTodos();
-                    }
-                }
-            });
-        }
-
-        // 6. POMODORO TIMER
-        let pomodoroState = {
-            isRunning: false,
-            timeLeft: 25 * 60,
-            isWorkTime: true,
-            taskId: null
-        };
-
-        function startPomodoro(taskId) {
-            pomodoroState.isRunning = true;
-            pomodoroState.taskId = taskId;
-            pomodoroState.timeLeft = 25 * 60;
-            pomodoroState.isWorkTime = true;
-
-            const pomodoroBtn = document.getElementById('pomodoroBtn');
-            if (pomodoroBtn) pomodoroBtn.style.display = 'none';
-
-            runPomodoro();
-        }
-
-        function runPomodoro() {
-            if (!pomodoroState.isRunning) return;
-
-            pomodoroState.timeLeft--;
-
-            const minutes = Math.floor(pomodoroState.timeLeft / 60);
-            const seconds = pomodoroState.timeLeft % 60;
-            
-            document.title = `⏱️ ${minutes}:${seconds.toString().padStart(2, '0')} - Todo List`;
-
-            if (pomodoroState.timeLeft <= 0) {
-                if (pomodoroState.isWorkTime) {
-                    showNotification('✅ เวลาทำงานสิ้นสุด! หยุดพักสักครู่');
-                    pomodoroState.timeLeft = 5 * 60;
-                    pomodoroState.isWorkTime = false;
-                } else {
-                    showNotification('🔔 เวลาพักสิ้นสุด! กลับมาทำงาน');
-                    stopPomodoro();
-                    return;
-                }
-            }
-
-            setTimeout(runPomodoro, 1000);
-        }
-
-        function stopPomodoro() {
-            pomodoroState.isRunning = false;
-            document.title = '📋 ตารางงานคุณชายโดม';
-            showToast('⏱️ หยุด Pomodoro');
-        }
-
-        // 7. EXPORT TO EXCEL
-        function exportToExcel() {
-            const data = todos.map(todo => ({
-                '✓': todo.completed ? '✅' : '⭕',
-                '📌': todo.isPinned ? '📌' : '',
-                'งาน': todo.text,
-                'ความสำคัญ': ['🟢 สำคัญน้อย', '🟡 ปานกลาง', '🔴 สำคัญมาก'][['low', 'medium', 'high'].indexOf(todo.priority)],
-                'หมวดหมู่': todo.category,
-                'สาขา': todo.branches?.join(', ') || '',
-                'วันที่': todo.dueDate || '',
-                'เวลา': todo.timeStart ? `${todo.timeStart}-${todo.timeEnd || ''}` : '',
-                'หมายเหตุ': todo.notes || '',
-                'งานย่อย': todo.subtasks?.length || 0
-            }));
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Tasks');
-            
-            const date = new Date().toISOString().split('T')[0];
-            XLSX.writeFile(wb, `tasks_${date}.xlsx`);
-            showToast('✅ ส่งออก Excel สำเร็จ');
-        }
-
-        // 8. SEARCH & FILTER
-        function searchTasks(query) {
-            if (!query) {
-                renderTodos();
-                return;
-            }
-
-            const filtered = todos.filter(todo => 
-                todo.text.toLowerCase().includes(query.toLowerCase()) ||
-                todo.notes?.toLowerCase().includes(query.toLowerCase()) ||
-                todo.branches?.some(b => b.toLowerCase().includes(query.toLowerCase()))
-            );
-
-            renderFilteredTodos(filtered, 'search');
-        }
-
-        // 9. STATISTICS/ANALYTICS
-        function getStatistics() {
-            const total = todos.length;
-            const completed = todos.filter(t => t.completed).length;
-            const pending = total - completed;
-            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-            const byCategory = {};
-            const byBranch = {};
-            const byPriority = { high: 0, medium: 0, low: 0 };
-
-            todos.forEach(todo => {
-                if (!byCategory[todo.category]) byCategory[todo.category] = { total: 0, completed: 0 };
-                byCategory[todo.category].total++;
-                if (todo.completed) byCategory[todo.category].completed++;
-
-                byPriority[todo.priority]++;
-
-                if (todo.branches) {
-                    todo.branches.forEach(branch => {
-                        if (!byBranch[branch]) byBranch[branch] = { total: 0, completed: 0 };
-                        byBranch[branch].total++;
-                        if (todo.completed) byBranch[branch].completed++;
-                    });
-                }
-            });
-
-            return { total, completed, pending, completionRate, byCategory, byBranch, byPriority };
-        }
-
-        function showStatistics() {
-            const stats = getStatistics();
-            let msg = `📊 สถิติงาน\n\n`;
-            msg += `📋 รวมทั้งหมด: ${stats.total}\n`;
-            msg += `✅ ทำเสร็จแล้ว: ${stats.completed}\n`;
-            msg += `⏳ รอดำเนินการ: ${stats.pending}\n`;
-            msg += `📈 ความสำเร็จ: ${stats.completionRate}%\n\n`;
-
-            msg += `📂 ตามหมวดหมู่:\n`;
-            Object.entries(stats.byCategory).forEach(([cat, data]) => {
-                const rate = data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
-                msg += `  ${cat}: ${data.completed}/${data.total} (${rate}%)\n`;
-            });
-
-            alert(msg);
-        }
-
-        // 10. PROGRESS BARS
-        function getProgressPercentage(category) {
-            const catTodos = todos.filter(t => t.category === category);
-            if (catTodos.length === 0) return 0;
-            return Math.round((catTodos.filter(t => t.completed).length / catTodos.length) * 100);
-        }
+        function refreshAllViews() {
             updateSidebarCounts();
             renderDashboardSummary();
             renderTodos();
@@ -6591,17 +6129,12 @@
             document.getElementById('calMonthPending').textContent = monthPending;
             document.getElementById('calMonthDayOff').textContent = monthDayOffs;
 
-            // Calculate leave stats - รวมทั้ง dayOffs และ leaveDays
+            // Calculate leave stats
             const monthLeaves = leaveDays.filter(l => l.date >= firstDayOfMonth && l.date <= lastDayOfMonth);
-            const monthDayOffsTotal = dayOffs.filter(d => d >= firstDayOfMonth && d <= lastDayOfMonth).length;
-            
             const holidayCount = monthLeaves.filter(l => l.type === 'holiday').length;
             const vacationCount = monthLeaves.filter(l => l.type === 'vacation').length;
             const sickCount = monthLeaves.filter(l => l.type === 'sick').length;
             const personalCount = monthLeaves.filter(l => l.type === 'personal').length;
-            
-            // รวมวันลาทั้งหมด = dayOffs + leaveDays
-            const totalLeaveDays = monthDayOffsTotal + monthLeaves.length;
 
             const holidayEl = document.getElementById('leaveHolidayCount');
             const vacationEl = document.getElementById('leaveVacationCount');
@@ -6927,10 +6460,7 @@
             }
             
             localStorage.setItem('dayOffs', JSON.stringify(dayOffs));
-            localStorage.setItem('leaveDays', JSON.stringify(leaveDays));
             renderCalendar();
-            renderWeekPlan();
-            renderDashboardSummary();
         }
 
         function closeModal(event) {
@@ -7655,6 +7185,392 @@
                     return false;
             }
         }
+
+        // ========================================
+        // ENHANCED FEATURES - 15 NEW FEATURES
+        // ========================================
+
+        // 1. 🔍 SEARCH FUNCTION
+        function searchTodos() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            if (searchTerm) {
+                clearBtn.style.display = 'block';
+            } else {
+                clearBtn.style.display = 'none';
+            }
+            
+            renderTodos(searchTerm);
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            renderTodos();
+        }
+
+        // 2. 📝 NOTES FEATURE
+        function addNoteToTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            const note = prompt('เพิ่มบันทึก:', todo.notes || '');
+            if (note !== null) {
+                todo.notes = note;
+                saveTodos();
+                refreshAllViews();
+                showToast('✅ บันทึกโน้ตสำเร็จ!');
+            }
+        }
+
+        // 3. 📌 PIN FEATURE
+        function togglePin(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.pinned = !todo.pinned;
+                saveTodos();
+                refreshAllViews();
+                showToast(todo.pinned ? '📌 ปักหมุดแล้ว!' : '📌 ยกเลิกปักหมุด');
+            }
+        }
+
+        // 4. 🏷️ TAGS FEATURE
+        function addTagToTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            const tag = prompt('เพิ่มแท็ก (คั่นด้วย , สำหรับหลายแท็ก):', 
+                (todo.tags || []).join(', '));
+            
+            if (tag !== null) {
+                todo.tags = tag.split(',').map(t => t.trim()).filter(t => t);
+                saveTodos();
+                refreshAllViews();
+                showToast('🏷️ เพิ่มแท็กสำเร็จ!');
+            }
+        }
+
+        // 5. 📎 LINKS FEATURE
+        function addLinkToTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            const link = prompt('เพิ่มลิงก์:', todo.link || '');
+            if (link !== null) {
+                todo.link = link;
+                saveTodos();
+                refreshAllViews();
+                showToast('📎 เพิ่มลิงก์สำเร็จ!');
+            }
+        }
+
+        // 6. 📊 PROGRESS BAR (Sub-tasks)
+        function addSubTask(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            const subTaskText = prompt('เพิ่มงานย่อย:');
+            if (subTaskText && subTaskText.trim()) {
+                if (!todo.subTasks) todo.subTasks = [];
+                todo.subTasks.push({
+                    id: Date.now(),
+                    text: subTaskText.trim(),
+                    completed: false
+                });
+                saveTodos();
+                refreshAllViews();
+                showToast('✅ เพิ่มงานย่อยสำเร็จ!');
+            }
+        }
+
+        function toggleSubTask(todoId, subTaskId) {
+            const todo = todos.find(t => t.id === todoId);
+            if (!todo || !todo.subTasks) return;
+            
+            const subTask = todo.subTasks.find(st => st.id === subTaskId);
+            if (subTask) {
+                subTask.completed = !subTask.completed;
+                saveTodos();
+                refreshAllViews();
+            }
+        }
+
+        function getProgress(todo) {
+            if (!todo.subTasks || todo.subTasks.length === 0) return 0;
+            const completed = todo.subTasks.filter(st => st.completed).length;
+            return Math.round((completed / todo.subTasks.length) * 100);
+        }
+
+        // 7. ⏱️ TIMER/POMODORO
+        let timerInterval = null;
+        let timerTodoId = null;
+        let timerSeconds = 0;
+
+        function startTimer(id) {
+            if (timerInterval) {
+                showToast('⏱️ กำลังจับเวลางานอื่นอยู่!', 'error');
+                return;
+            }
+            
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            timerTodoId = id;
+            timerSeconds = todo.timerSeconds || 0;
+            
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                todo.timerSeconds = timerSeconds;
+                saveTodos();
+                updateTimerDisplay(id);
+            }, 1000);
+            
+            showToast('⏱️ เริ่มจับเวลา!');
+            refreshAllViews();
+        }
+
+        function stopTimer(id) {
+            if (timerInterval && timerTodoId === id) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerTodoId = null;
+                showToast('⏱️ หยุดจับเวลา!');
+                refreshAllViews();
+            }
+        }
+
+        function resetTimer(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            if (confirm('ต้องการรีเซ็ตเวลา?')) {
+                todo.timerSeconds = 0;
+                timerSeconds = 0;
+                saveTodos();
+                refreshAllViews();
+                showToast('⏱️ รีเซ็ตเวลาแล้ว!');
+            }
+        }
+
+        function updateTimerDisplay(id) {
+            const display = document.getElementById(`timer-${id}`);
+            if (display) {
+                const todo = todos.find(t => t.id === id);
+                const seconds = todo?.timerSeconds || 0;
+                const hours = Math.floor(seconds / 3600);
+                const mins = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                display.textContent = `${hours}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            }
+        }
+
+        // 8. 🎨 COLOR LABELS
+        function setColorLabel(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            const colors = {
+                '': 'ไม่มีสี',
+                '#ef4444': '🔴 แดง',
+                '#f59e0b': '🟡 เหลือง',
+                '#10b981': '🟢 เขียว',
+                '#3b82f6': '🔵 น้ำเงิน',
+                '#8b5cf6': '🟣 ม่วง',
+                '#ec4899': '🩷 ชมพู'
+            };
+            
+            let colorOptions = '';
+            Object.entries(colors).forEach(([value, label]) => {
+                const selected = todo.colorLabel === value ? 'selected' : '';
+                colorOptions += `<option value="${value}" ${selected}>${label}</option>`;
+            });
+            
+            const select = document.createElement('select');
+            select.innerHTML = colorOptions;
+            select.style.cssText = 'padding: 8px; font-size: 1rem; border-radius: 8px;';
+            
+            const result = prompt('เลือกสี (0=ไม่มี 1=แดง 2=เหลือง 3=เขียว 4=น้ำเงิน 5=ม่วง 6=ชมพู):');
+            if (result !== null) {
+                const colorKeys = ['', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+                const colorIndex = parseInt(result);
+                if (colorIndex >= 0 && colorIndex < colorKeys.length) {
+                    todo.colorLabel = colorKeys[colorIndex];
+                    saveTodos();
+                    refreshAllViews();
+                    showToast('🎨 ตั้งค่าสีสำเร็จ!');
+                }
+            }
+        }
+
+        // 9. 👥 ASSIGN FEATURE
+        function assignTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            
+            const assignee = prompt('มอบหมายให้:', todo.assignee || '');
+            if (assignee !== null) {
+                todo.assignee = assignee;
+                saveTodos();
+                refreshAllViews();
+                showToast('👥 มอบหมายงานสำเร็จ!');
+            }
+        }
+
+        // 10. 📤 EXPORT TO CSV
+        function exportToCSV() {
+            let csv = 'งาน,สถานะ,ความสำคัญ,หมวดหมู่,วันที่,เวลาเริ่ม,เวลาสิ้นสุด,สาขา,ผู้รับผิดชอบ,โน้ต,แท็ก\n';
+            
+            todos.forEach(todo => {
+                const row = [
+                    `"${todo.text}"`,
+                    todo.completed ? 'เสร็จแล้ว' : 'ยังไม่เสร็จ',
+                    todo.priority === 'high' ? 'สูง' : todo.priority === 'medium' ? 'ปานกลาง' : 'ต่ำ',
+                    todo.category || '-',
+                    todo.dueDate || '-',
+                    todo.timeStart || '-',
+                    todo.timeEnd || '-',
+                    (todo.branches || []).join(';') || '-',
+                    todo.assignee || '-',
+                    `"${(todo.notes || '').replace(/"/g, '""')}"`,
+                    (todo.tags || []).join(';') || '-'
+                ].join(',');
+                csv += row + '\n';
+            });
+            
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `todos_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('📤 Export สำเร็จ!');
+        }
+
+        // 11. 📊 STATISTICS MODAL
+        function showStatsModal() {
+            const total = todos.length;
+            const completed = todos.filter(t => t.completed).length;
+            const pending = total - completed;
+            const high = todos.filter(t => t.priority === 'high').length;
+            const medium = todos.filter(t => t.priority === 'medium').length;
+            const low = todos.filter(t => t.priority === 'low').length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayTodos = todos.filter(t => t.dueDate === today);
+            const overdue = todos.filter(t => t.dueDate && t.dueDate < today && !t.completed).length;
+            
+            const avgCompletion = total > 0 ? Math.round((completed / total) * 100) : 0;
+            
+            let message = `📊 สถิติการทำงาน\n\n`;
+            message += `งานทั้งหมด: ${total}\n`;
+            message += `✅ เสร็จแล้ว: ${completed} (${avgCompletion}%)\n`;
+            message += `⏳ ค้างอยู่: ${pending}\n`;
+            message += `⚠️ เลยกำหนด: ${overdue}\n`;
+            message += `📅 งานวันนี้: ${todayTodos.length}\n\n`;
+            message += `ความสำคัญ:\n`;
+            message += `🔴 สูง: ${high}\n`;
+            message += `🟡 ปานกลาง: ${medium}\n`;
+            message += `🟢 ต่ำ: ${low}`;
+            
+            alert(message);
+        }
+
+        // 12. ✅ TOGGLE ALL COMPLETED
+        function toggleAllCompleted() {
+            const allCompleted = todos.filter(t => !t.completed).length === 0;
+            
+            if (allCompleted) {
+                todos.forEach(t => t.completed = false);
+                showToast('🔄 ยกเลิกเครื่องหมายทั้งหมด!');
+            } else {
+                if (confirm('ต้องการทำเครื่องหมายงานทั้งหมดว่าเสร็จแล้ว?')) {
+                    todos.forEach(t => t.completed = true);
+                    showToast('✅ ทำเครื่องหมายทั้งหมดแล้ว!');
+                } else {
+                    return;
+                }
+            }
+            
+            saveTodos();
+            refreshAllViews();
+        }
+
+        // 13. 🔔 REMINDER (Browser Notification)
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        function checkReminders() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const now = new Date();
+                const nowStr = now.toISOString();
+                
+                todos.forEach(todo => {
+                    if (!todo.completed && todo.dueDate && !todo.reminded) {
+                        const dueDateTime = new Date(todo.dueDate + 'T' + (todo.timeStart || '09:00'));
+                        const diff = dueDateTime - now;
+                        
+                        // Remind 1 hour before
+                        if (diff > 0 && diff <= 3600000) { // 1 hour
+                            new Notification('⏰ งานใกล้ถึงกำหนด!', {
+                                body: `${todo.text}\nเวลา: ${todo.timeStart || 'ไม่ระบุ'}`,
+                                icon: '📋'
+                            });
+                            todo.reminded = true;
+                            saveTodos();
+                        }
+                    }
+                });
+            }
+        }
+
+        // 14. ⭐ ENHANCED PRIORITY VISUAL (already improved in render)
+        
+        // 15. 🔄 SORT FUNCTIONS
+        let currentSort = 'default';
+        
+        function sortTodos(type) {
+            currentSort = type;
+            renderTodos();
+        }
+
+        function applySorting(todoList) {
+            switch(currentSort) {
+                case 'priority':
+                    return todoList.sort((a, b) => {
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+                    });
+                case 'date':
+                    return todoList.sort((a, b) => {
+                        if (!a.dueDate) return 1;
+                        if (!b.dueDate) return -1;
+                        return a.dueDate.localeCompare(b.dueDate);
+                    });
+                case 'name':
+                    return todoList.sort((a, b) => a.text.localeCompare(b.text));
+                case 'category':
+                    return todoList.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
+                default:
+                    // Pin to top, then by creation date
+                    return todoList.sort((a, b) => {
+                        if (a.pinned && !b.pinned) return -1;
+                        if (!a.pinned && b.pinned) return 1;
+                        return b.id - a.id;
+                    });
+            }
+        }
+
+        // ========================================
+        // END OF ENHANCED FEATURES
+        // ========================================
 
         // Initialize on load
         window.addEventListener('load', init);
